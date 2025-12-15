@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, ListGroup } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,11 +16,8 @@ const paymentSchema = z.object({
 })
 
 export default function Payment() {
-  const { vehicleId } = useParams()
-  console.log('Vehicle ID:', vehicleId)
-
   const navigate = useNavigate()
-  
+
   const {
     register,
     handleSubmit,
@@ -44,13 +41,12 @@ export default function Payment() {
   const onSubmit = async (data) => {
     try {
       console.log('Payment data:', data)
-      
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
+
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
       toast.success('Payment successful!')
       navigate('/dashboard')
-    } catch  {
+    } catch {
       toast.error('Payment failed. Please try again.')
     }
   }
@@ -60,21 +56,21 @@ export default function Payment() {
       <Row className="justify-content-center">
         <Col lg={10}>
           <h2 className="fw-bold mb-4">Complete Your Payment</h2>
-          
+
           <Row>
             {/* Payment Form */}
             <Col md={7} className="mb-4">
               <Card className="shadow-sm border-0">
                 <Card.Body className="p-4">
                   <h5 className="fw-bold mb-4">Payment Information</h5>
-                  
+
                   <Form onSubmit={handleSubmit(onSubmit)}>
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>
                       <Form.Control
                         type="text"
-                        placeholder="1234 5678 9012 3456"
                         maxLength={16}
+                        placeholder="1234567812345678"
                         {...register('cardNumber')}
                         isInvalid={!!errors.cardNumber}
                       />
@@ -112,6 +108,7 @@ export default function Payment() {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
+
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>CVV</Form.Label>
@@ -152,7 +149,6 @@ export default function Payment() {
                           <Form.Label>City</Form.Label>
                           <Form.Control
                             type="text"
-                            placeholder="New York"
                             {...register('city')}
                             isInvalid={!!errors.city}
                           />
@@ -161,12 +157,12 @@ export default function Payment() {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
+
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Zip Code</Form.Label>
                           <Form.Control
                             type="text"
-                            placeholder="10001"
                             {...register('zipCode')}
                             isInvalid={!!errors.zipCode}
                           />
@@ -177,10 +173,10 @@ export default function Payment() {
                       </Col>
                     </Row>
 
-                    <Button 
-                      type="submit" 
-                      variant="primary" 
-                      size="lg" 
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
                       className="w-100 mt-3"
                       disabled={isSubmitting}
                     >
@@ -193,44 +189,35 @@ export default function Payment() {
 
             {/* Order Summary */}
             <Col md={5}>
-              <Card className="shadow-sm border-0 sticky-top" style={{ top: '100px' }}>
+              <Card className="shadow-sm border-0 sticky-top" style={{ top: 100 }}>
                 <Card.Body className="p-4">
                   <h5 className="fw-bold mb-4">Order Summary</h5>
-                  
-                  <div className="mb-3">
-                    <h6 className="fw-bold">{vehicleData.name}</h6>
-                    <p className="text-muted small mb-0">
-                      {vehicleData.days} days rental
-                    </p>
-                  </div>
 
-                  <ListGroup variant="flush" className="mb-3">
+                  <h6 className="fw-bold">{vehicleData.name}</h6>
+                  <p className="text-muted small">
+                    {vehicleData.days} days rental
+                  </p>
+
+                  <ListGroup variant="flush">
                     <ListGroup.Item className="d-flex justify-content-between px-0">
-                      <span>Rental (${vehicleData.pricePerDay} × {vehicleData.days} days)</span>
-                      <span className="fw-semibold">${subtotal}</span>
+                      <span>Rental</span>
+                      <span>${subtotal}</span>
                     </ListGroup.Item>
                     <ListGroup.Item className="d-flex justify-content-between px-0">
                       <span>Insurance</span>
-                      <span className="fw-semibold">${vehicleData.insurance}</span>
+                      <span>${vehicleData.insurance}</span>
                     </ListGroup.Item>
                     <ListGroup.Item className="d-flex justify-content-between px-0">
                       <span>Tax</span>
-                      <span className="fw-semibold">${vehicleData.tax}</span>
+                      <span>${vehicleData.tax}</span>
                     </ListGroup.Item>
                   </ListGroup>
 
                   <hr />
 
-                  <div className="d-flex justify-content-between mb-3">
-                    <span className="fw-bold fs-5">Total</span>
-                    <span className="fw-bold fs-5 text-primary">${total}</span>
-                  </div>
-
-                  <div className="bg-light p-3 rounded">
-                    <p className="small mb-2 fw-semibold">🔒 Secure Payment</p>
-                    <p className="small text-muted mb-0">
-                      Your payment information is encrypted and secure
-                    </p>
+                  <div className="d-flex justify-content-between fw-bold">
+                    <span>Total</span>
+                    <span className="text-primary">${total}</span>
                   </div>
                 </Card.Body>
               </Card>

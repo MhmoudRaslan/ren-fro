@@ -48,7 +48,7 @@ export default function Home() {
           <p className="hero-subtitle lead mb-4">
             Rent premium vehicles at affordable prices. Your journey starts here.
           </p>
-          <div className="d-flex gap-3 justify-content-center">
+          <div className="d-flex gap-3 justify-content-center flex-wrap">
             <Button as={Link} to="/search" size="lg" variant="light" className="px-5 py-3">
               Browse Vehicles
             </Button>

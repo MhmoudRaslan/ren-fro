@@ -4,7 +4,6 @@ import { Container, Row, Col, Card, Button, Badge, ListGroup } from 'react-boots
 export default function VehicleDetail() {
   const { id } = useParams()
 
-  // Mock vehicle data - replace with API call
   const vehicle = {
     id,
     name: 'Tesla Model 3',

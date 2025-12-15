@@ -4,10 +4,9 @@ import { useState } from 'react'
 
 export default function Navbar() {
   const navigate = useNavigate()
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // This should come from auth context
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const handleLogout = () => {
-    // Add logout logic here
     setIsLoggedIn(false)
     navigate('/')
   }
@@ -56,13 +55,14 @@ export default function Navbar() {
                   Sign In
                 </Nav.Link>
                 
-               <Nav.Link
-  as={Link}
-  to="/signup"
-  className="ms-2 px-4 btn btn-primary text-white"
->
-  Sign Up
-</Nav.Link>
+                <Button 
+                  as={Link} 
+                  to="/signup" 
+                  variant="primary" 
+                  className="ms-2 px-4"
+                >
+                  Sign Up
+                </Button>
               </>
             )}
           </Nav>

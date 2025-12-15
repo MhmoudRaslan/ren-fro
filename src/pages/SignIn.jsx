@@ -5,41 +5,30 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 
-const signUpSchema = z.object({
-  fullName: z.string().min(2, 'Full name must be at least 2 characters'),
+const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
-  terms: z.boolean().refine((val) => val === true, {
-    message: 'You must accept the terms and conditions',
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  remember: z.boolean().optional(),
 })
 
-export default function SignUp() {
+export default function SignIn() {
   const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signInSchema),
   })
 
   const onSubmit = async (data) => {
     try {
-      // Add your sign-up API call here
-      console.log('Sign up data:', data)
-      
-      // Simulate API call
+      console.log('Sign in data:', data)
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success('Account created successfully!')
+      toast.success('Signed in successfully!')
       navigate('/dashboard')
-    } catch {
-      toast.error('Sign up failed. Please try again.')
+    } catch  {
+      toast.error('Sign in failed. Please try again.')
     }
   }
 
@@ -50,24 +39,11 @@ export default function SignUp() {
           <Card className="shadow-lg border-0">
             <Card.Body className="p-5">
               <div className="text-center mb-4">
-                <h2 className="fw-bold">Create Account</h2>
-                <p className="text-muted">Join Renato today</p>
+                <h2 className="fw-bold">Welcome Back</h2>
+                <p className="text-muted">Sign in to your account</p>
               </div>
 
               <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Full Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter your full name"
-                    {...register('fullName')}
-                    isInvalid={!!errors.fullName}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.fullName?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
                 <Form.Group className="mb-3">
                   <Form.Label>Email Address</Form.Label>
                   <Form.Control
@@ -85,7 +61,7 @@ export default function SignUp() {
                   <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
-                    placeholder="Create a password"
+                    placeholder="Enter your password"
                     {...register('password')}
                     isInvalid={!!errors.password}
                   />
@@ -94,36 +70,16 @@ export default function SignUp() {
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Confirm Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Confirm your password"
-                    {...register('confirmPassword')}
-                    isInvalid={!!errors.confirmPassword}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.confirmPassword?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
                   <Form.Check
                     type="checkbox"
-                    label={
-                      <>
-                        I agree to the{' '}
-                        <Link to="/terms" className="text-decoration-none">
-                          Terms and Conditions
-                        </Link>
-                      </>
-                    }
-                    {...register('terms')}
-                    isInvalid={!!errors.terms}
-                    feedback={errors.terms?.message}
-                    feedbackType="invalid"
+                    label="Remember me"
+                    {...register('remember')}
                   />
-                </Form.Group>
+                  <Link to="/forgot-password" className="text-decoration-none">
+                    Forgot password?
+                  </Link>
+                </div>
 
                 <Button
                   type="submit"
@@ -131,12 +87,12 @@ export default function SignUp() {
                   className="w-100 py-2"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Creating account...' : 'Create Account'}
+                  {isSubmitting ? 'Signing in...' : 'Sign In'}
                 </Button>
               </Form>
 
               <div className="text-center mt-4">
-                <p className="text-muted mb-3">Or sign up with</p>
+                <p className="text-muted mb-3">Or sign in with</p>
                 <div className="d-flex gap-2">
                   <Button variant="outline-secondary" className="flex-fill">
                     <i className="bi bi-google me-2"></i> Google
@@ -151,9 +107,9 @@ export default function SignUp() {
 
               <div className="text-center">
                 <p className="mb-0">
-                  Already have an account?{' '}
-                  <Link to="/signin" className="text-decoration-none fw-bold">
-                    Sign in
+                  Don&apos;t have an account?{' '}
+                  <Link to="/signup" className="text-decoration-none fw-bold">
+                    Sign up
                   </Link>
                 </p>
               </div>
