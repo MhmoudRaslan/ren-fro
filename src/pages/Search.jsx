@@ -3,227 +3,218 @@ import { Container, Row, Col, Card, Form, Button, Badge } from 'react-bootstrap'
 import { useState } from 'react'
 
 export default function Search() {
-  const [filters, setFilters] = useState({
-    category: '',
-    priceRange: '',
-    transmission: '',
-    fuelType: '',
-  })
+  const [priceRange, setPriceRange] = useState([50, 500])
 
   const vehicles = [
     {
       id: 1,
-      name: 'Tesla Model 3',
-      category: 'Electric',
-      price: 89,
-      image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400',
-      rating: 4.8,
-      transmission: 'Automatic',
+      name: 'Tesla Model Y Performance',
+      year: 2024,
+      category: 'SUV',
+      price: 129,
+      image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600',
+      rating: 4.9,
       seats: 5,
+      transmission: 'Auto',
+      fuel: 'Electric',
       available: true
     },
     {
       id: 2,
-      name: 'BMW X5',
-      category: 'SUV',
-      price: 120,
-      image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400',
-      rating: 4.9,
-      transmission: 'Automatic',
-      seats: 7,
+      name: 'Porsche 911 Carrera',
+      year: 2023,
+      category: 'Sports',
+      price: 350,
+      image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600',
+      rating: 5.0,
+      seats: 4,
+      transmission: 'Auto',
+      fuel: 'Petrol',
       available: true
     },
     {
       id: 3,
-      name: 'Mercedes C-Class',
-      category: 'Sedan',
-      price: 95,
-      image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400',
-      rating: 4.7,
-      transmission: 'Automatic',
+      name: 'Mercedes-Benz G-Class',
+      year: 2023,
+      category: 'SUV',
+      price: 400,
+      image: 'https://images.unsplash.com/photo-1617531653520-bd4f03619e05?w=600',
+      rating: 4.8,
       seats: 5,
-      available: false
+      transmission: 'Auto',
+      fuel: 'Petrol',
+      available: true
     },
     {
       id: 4,
-      name: 'Audi A4',
-      category: 'Sedan',
-      price: 85,
-      image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400',
-      rating: 4.6,
-      transmission: 'Automatic',
-      seats: 5,
+      name: 'BMW M4 Competition',
+      year: 2024,
+      category: 'Coupe',
+      price: 299,
+      image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600',
+      rating: 4.9,
+      seats: 4,
+      transmission: 'Auto',
+      fuel: 'Petrol',
       available: true
     },
     {
       id: 5,
-      name: 'Ford Mustang',
-      category: 'Sports',
-      price: 110,
-      image: 'https://images.unsplash.com/photo-1584345604476-8ec5f1f49587?w=400',
-      rating: 4.8,
-      transmission: 'Manual',
-      seats: 4,
+      name: 'Range Rover Autobiography',
+      year: 2023,
+      category: 'SUV',
+      price: 450,
+      image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600',
+      rating: 4.7,
+      seats: 5,
+      transmission: 'Auto',
+      fuel: 'Petrol',
       available: true
     },
     {
       id: 6,
-      name: 'Toyota Camry',
+      name: 'Audi RS e-tron GT',
+      year: 2024,
       category: 'Sedan',
-      price: 65,
-      image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400',
-      rating: 4.5,
-      transmission: 'Automatic',
+      price: 399,
+      image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600',
+      rating: 4.9,
       seats: 5,
+      transmission: 'Auto',
+      fuel: 'Electric',
       available: true
     },
   ]
 
   return (
-    <Container className="py-5">
-      <h1 className="fw-bold mb-4">Search Vehicles</h1>
-      
-      <Row>
-        {/* Filters Sidebar */}
-        <Col md={3} className="mb-4">
-          <Card className="shadow-sm border-0 sticky-top" style={{ top: '100px' }}>
-            <Card.Body>
-              <h5 className="fw-bold mb-4">Filters</h5>
-              
-              <Form>
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">Category</Form.Label>
-                  <Form.Select
-                    value={filters.category}
-                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                  >
-                    <option value="">All Categories</option>
-                    <option value="sedan">Sedan</option>
-                    <option value="suv">SUV</option>
-                    <option value="sports">Sports</option>
-                    <option value="electric">Electric</option>
-                  </Form.Select>
-                </Form.Group>
+    <div style={{ backgroundColor: '#fafafa', minHeight: '100vh', paddingTop: '2rem', paddingBottom: '4rem' }}>
+      <Container>
+        {/* Header */}
+        <div className="mb-4">
+          <h1 className="fw-bold mb-2" style={{ fontSize: '2.5rem' }}>Find your perfect ride</h1>
+          <p className="text-muted">{vehicles.length} vehicles available in San Francisco, CA</p>
+        </div>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">Price Range</Form.Label>
-                  <Form.Select
-                    value={filters.priceRange}
-                    onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
-                  >
-                    <option value="">All Prices</option>
-                    <option value="0-50">$0 - $50</option>
-                    <option value="50-100">$50 - $100</option>
-                    <option value="100-150">$100 - $150</option>
-                    <option value="150+">$150+</option>
-                  </Form.Select>
-                </Form.Group>
+        <Row>
+          {/* Filters Sidebar */}
+          <Col lg={3} className="mb-4">
+            <div className="search-sidebar">
+              {/* Price Range */}
+              <div className="mb-4">
+                <h6 className="fw-bold mb-3">Price Range</h6>
+                <input 
+                  type="range" 
+                  className="form-range mb-2" 
+                  min="50" 
+                  max="500" 
+                  value={priceRange[1]}
+                  onChange={(e) => setPriceRange([50, parseInt(e.target.value)])}
+                  style={{ accentColor: '#14b8a6' }}
+                />
+                <div className="d-flex justify-content-between">
+                  <span className="fw-semibold">${priceRange[0]}</span>
+                  <span className="fw-semibold">${priceRange[1]}+</span>
+                </div>
+              </div>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">Transmission</Form.Label>
-                  <Form.Select
-                    value={filters.transmission}
-                    onChange={(e) => setFilters({ ...filters, transmission: e.target.value })}
-                  >
-                    <option value="">All</option>
-                    <option value="automatic">Automatic</option>
-                    <option value="manual">Manual</option>
-                  </Form.Select>
-                </Form.Group>
+              {/* Category */}
+              <div className="mb-4">
+                <h6 className="fw-bold mb-3">Category</h6>
+                {['SUV', 'Sedan', 'Sports', 'Coupe', 'Luxury', 'Electric'].map((cat) => (
+                  <Form.Check
+                    key={cat}
+                    type="radio"
+                    name="category"
+                    label={cat}
+                    className="mb-2"
+                  />
+                ))}
+              </div>
 
-                <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold">Fuel Type</Form.Label>
-                  <Form.Select
-                    value={filters.fuelType}
-                    onChange={(e) => setFilters({ ...filters, fuelType: e.target.value })}
-                  >
-                    <option value="">All</option>
-                    <option value="gasoline">Gasoline</option>
-                    <option value="diesel">Diesel</option>
-                    <option value="electric">Electric</option>
-                    <option value="hybrid">Hybrid</option>
-                  </Form.Select>
-                </Form.Group>
+              {/* Transmission */}
+              <div className="mb-4">
+                <h6 className="fw-bold mb-3">Transmission</h6>
+                <Form.Check type="radio" name="transmission" label="Automatic" className="mb-2" />
+                <Form.Check type="radio" name="transmission" label="Manual" className="mb-2" />
+              </div>
 
-                <Button variant="primary" className="w-100 mb-2">
-                  Apply Filters
-                </Button>
-                <Button variant="outline-secondary" className="w-100">
-                  Reset Filters
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
+              {/* Features */}
+              <div className="mb-4">
+                <h6 className="fw-bold mb-3">Features</h6>
+                <Form.Check type="checkbox" label="Bluetooth" className="mb-2" />
+                <Form.Check type="checkbox" label="GPS" className="mb-2" />
+                <Form.Check type="checkbox" label="Sunroof" className="mb-2" />
+                <Form.Check type="checkbox" label="Heated Seats" className="mb-2" />
+                <Form.Check type="checkbox" label="Apple CarPlay" className="mb-2" />
+              </div>
+            </div>
+          </Col>
 
-        {/* Vehicle Grid */}
-        <Col md={9}>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <p className="text-muted mb-0">{vehicles.length} vehicles found</p>
-            <Form.Select style={{ width: 'auto' }}>
-              <option>Sort by: Recommended</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Rating: High to Low</option>
-            </Form.Select>
-          </div>
+          {/* Vehicle Grid */}
+          <Col lg={9}>
+            {/* Sort */}
+            <div className="d-flex justify-content-end mb-4">
+              <Form.Select style={{ width: 'auto', borderRadius: '10px' }}>
+                <option>Sort by: Recommended</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Rating: High to Low</option>
+                <option>Newest First</option>
+              </Form.Select>
+            </div>
 
-          <Row>
-            {vehicles.map((vehicle) => (
-              <Col key={vehicle.id} lg={4} md={6} className="mb-4">
-                <Card className="vehicle-card shadow-sm h-100">
-                  <div className="position-relative">
-                    <Card.Img 
-                      variant="top" 
-                      src={vehicle.image} 
-                      className="vehicle-image"
-                      alt={vehicle.name}
-                    />
-                    {vehicle.available ? (
-                      <Badge bg="success" className="position-absolute top-0 end-0 m-3">
-                        Available
-                      </Badge>
-                    ) : (
-                      <Badge bg="danger" className="position-absolute top-0 end-0 m-3">
-                        Unavailable
-                      </Badge>
-                    )}
-                  </div>
-                  <Card.Body>
-                    <div className="d-flex justify-content-between align-items-start mb-2">
-                      <div>
-                        <Card.Title className="mb-1">{vehicle.name}</Card.Title>
-                        <Badge bg="secondary" className="mb-2">{vehicle.category}</Badge>
+            <Row>
+              {vehicles.map((vehicle) => (
+                <Col key={vehicle.id} lg={4} md={6} className="mb-4">
+                  <Card className="vehicle-card h-100">
+                    <div className="position-relative">
+                      <Card.Img 
+                        variant="top" 
+                        src={vehicle.image} 
+                        className="vehicle-image"
+                        alt={vehicle.name}
+                      />
+                      <span className="vehicle-badge">{vehicle.category}</span>
+                      <span className="vehicle-rating">
+                        ⭐ {vehicle.rating}
+                      </span>
+                    </div>
+                    <Card.Body>
+                      <h5 className="fw-bold mb-1" style={{ fontSize: '1.125rem' }}>
+                        {vehicle.name}
+                      </h5>
+                      <p className="text-muted small mb-3">{vehicle.year}</p>
+                      
+                      <div className="d-flex gap-3 mb-3 text-muted small">
+                        <span>👤 {vehicle.seats}</span>
+                        <span>⚙️ {vehicle.transmission}</span>
+                        <span>⚡ {vehicle.fuel}</span>
                       </div>
-                      <div className="text-warning">⭐ {vehicle.rating}</div>
-                    </div>
-                    
-                    <div className="d-flex gap-3 text-muted small mb-3">
-                      <span>🚗 {vehicle.transmission}</span>
-                      <span>👥 {vehicle.seats} seats</span>
-                    </div>
 
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="price-tag">
-                        ${vehicle.price}<small className="text-muted fs-6">/day</small>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <div className="price-tag">
+                            ${vehicle.price}
+                            <small>/day</small>
+                          </div>
+                        </div>
+                        <Button 
+                          as={Link} 
+                          to={`/vehicle/${vehicle.id}`} 
+                          variant="outline-primary"
+                          style={{ borderRadius: '10px', padding: '8px 20px' }}
+                        >
+                          View Details →
+                        </Button>
                       </div>
-                      <Button 
-                        as={Link} 
-                        to={`/vehicle/${vehicle.id}`} 
-                        variant="primary"
-                        size="sm"
-                        disabled={!vehicle.available}
-                      >
-                        {vehicle.available ? 'View' : 'Unavailable'}
-                      </Button>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </Col>
-      </Row>
-    </Container>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   )
 }

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Container, Nav, Navbar as BSNavbar, NavDropdown, Button } from 'react-bootstrap'
+import { Container, Nav, Navbar as BSNavbar, Button } from 'react-bootstrap'
 import { useState } from 'react'
 
 export default function Navbar() {
@@ -12,54 +12,68 @@ export default function Navbar() {
   }
 
   return (
-    <BSNavbar bg="white" expand="lg" className="shadow-sm sticky-top">
+    <BSNavbar bg="white" expand="lg" className="border-bottom py-3" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
       <Container>
-        <BSNavbar.Brand as={Link} to="/" className="fw-bold fs-4 text-primary">
-          🚗 Renato
+        {/* Logo */}
+        <BSNavbar.Brand as={Link} to="/" className="d-flex align-items-center">
+          <span className="fs-4 fw-bold" style={{ color: '#1a1a1a', letterSpacing: '-0.5px' }}>
+            🚗 Rentora
+          </span>
         </BSNavbar.Brand>
         
         <BSNavbar.Toggle aria-controls="basic-navbar-nav" />
         
         <BSNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto align-items-lg-center">
-            <Nav.Link as={Link} to="/" className="mx-2">
-              Home
+          {/* Center Nav Links */}
+          <Nav className="mx-auto">
+            <Nav.Link as={Link} to="/search" className="mx-3 fw-semibold" style={{ color: '#4a5568' }}>
+              Vehicles
             </Nav.Link>
-            
-            <Nav.Link as={Link} to="/search" className="mx-2">
-              Search Vehicles
+            <Nav.Link href="#" className="mx-3 fw-semibold" style={{ color: '#4a5568' }}>
+              How it works
             </Nav.Link>
+            <Nav.Link href="#" className="mx-3 fw-semibold" style={{ color: '#4a5568' }}>
+              Business
+            </Nav.Link>
+          </Nav>
+
+          {/* Right Side - Auth Buttons */}
+          <Nav className="align-items-lg-center">
+            <Button variant="link" className="text-decoration-none mx-2" style={{ color: '#4a5568' }}>
+              🔍
+            </Button>
             
             {isLoggedIn ? (
               <>
-                <Nav.Link as={Link} to="/dashboard" className="mx-2">
+                <Nav.Link as={Link} to="/dashboard" className="mx-2" style={{ color: '#4a5568' }}>
                   Dashboard
                 </Nav.Link>
-                
-                <NavDropdown title="Account" id="account-dropdown" className="mx-2">
-                  <NavDropdown.Item as={Link} to="/dashboard">
-                    My Profile
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/dashboard">
-                    My Bookings
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout}>
-                    Logout
-                  </NavDropdown.Item>
-                </NavDropdown>
+                <Button onClick={handleLogout} variant="outline-secondary" className="ms-2">
+                  Logout
+                </Button>
               </>
             ) : (
               <>
-                <Nav.Link as={Link} to="/signin" className="mx-2">
+                <Button 
+                  as={Link} 
+                  to="/signin" 
+                  variant="link"
+                  className="text-decoration-none mx-2 fw-semibold"
+                  style={{ color: '#4a5568' }}
+                >
                   Sign In
-                </Nav.Link>
-                
+                </Button>
                 <Button 
                   as={Link} 
                   to="/signup" 
-                  variant="primary" 
-                  className="ms-2 px-4"
+                  className="ms-2"
+                  style={{ 
+                    backgroundColor: '#14b8a6', 
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 24px',
+                    fontWeight: '600'
+                  }}
                 >
                   Sign Up
                 </Button>

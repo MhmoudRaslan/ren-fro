@@ -41,22 +41,58 @@ export default function Home() {
 
   return (
     <div>
-      {/* Hero Section */}
-      <div className="hero-section text-center">
-        <Container>
-          <h1 className="hero-title display-3 fw-bold mb-4">Find Your Perfect Ride</h1>
-          <p className="hero-subtitle lead mb-4">
-            Rent premium vehicles at affordable prices. Your journey starts here.
-          </p>
-          <div className="d-flex gap-3 justify-content-center flex-wrap">
-            <Button as={Link} to="/search" size="lg" variant="light" className="px-5 py-3">
-              Browse Vehicles
-            </Button>
-            <Button as={Link} to="/signup" size="lg" variant="outline-light" className="px-5 py-3">
-              Get Started
-            </Button>
-          </div>
-        </Container>
+      {/* Hero Section with Background Image */}
+      <div className="hero-section-image">
+        <div className="hero-overlay">
+          <Container className="text-center py-5">
+            <h1 className="display-2 fw-bold text-white mb-4" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+              Find your drive.
+            </h1>
+            <p className="lead text-white mb-5" style={{ fontSize: '1.3rem', textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
+              Premium vehicle rentals for every journey. From city streets<br />
+              to coastal roads, experience the freedom of the open road.
+            </p>
+            
+            {/* Search Box */}
+            <Row className="justify-content-center">
+              <Col lg={10}>
+                <Card className="shadow-lg border-0">
+                  <Card.Body className="p-4">
+                    <Row className="g-3 align-items-end">
+                      <Col md={4}>
+                        <label className="form-label text-start d-block fw-semibold">Pick-up Location</label>
+                        <input 
+                          type="text" 
+                          className="form-control form-control-lg" 
+                          placeholder="Enter location"
+                        />
+                      </Col>
+                      <Col md={4}>
+                        <label className="form-label text-start d-block fw-semibold">Pick-up Date</label>
+                        <input 
+                          type="date" 
+                          className="form-control form-control-lg"
+                        />
+                      </Col>
+                      <Col md={4}>
+                        <Button 
+                          as={Link}
+                          to="/search"
+                          variant="primary" 
+                          size="lg" 
+                          className="w-100"
+                          style={{ padding: '0.75rem' }}
+                        >
+                          Search Vehicles
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
       </div>
 
       {/* Features Section */}
