@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 // Layout Components
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
+import Chatbot from './components/Chatbot'
 
 // Pages
 import Home from './pages/Home'
@@ -14,6 +15,8 @@ import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import Payment from './pages/Payment'
+import HowItWorks from './pages/HowItWorks'
+import Business from './pages/Business'
 import NotFound from './pages/NotFound'
 
 // Create a client for React Query
@@ -37,6 +40,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/search" element={<Search />} />
               <Route path="/vehicle/:id" element={<VehicleDetail />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/business" element={<Business />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/dashboard" element={<Dashboard />} />
@@ -45,6 +50,7 @@ function App() {
             </Routes>
           </main>
           <Footer />
+          <Chatbot />
         </div>
         <Toaster 
           position="top-right"

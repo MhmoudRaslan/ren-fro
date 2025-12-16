@@ -26,7 +26,6 @@ export default function Navbar() {
             alt="Rentora Logo"
             style={{ height: "40px", width: "auto" }}
           />
-
           <span
             className="fs-4 fw-bold"
             style={{ color: "#1a1a1a", letterSpacing: "-0.5px" }}
@@ -49,14 +48,16 @@ export default function Navbar() {
               Vehicles
             </Nav.Link>
             <Nav.Link
-              href="#"
+              as={Link}
+              to="/how-it-works"
               className="mx-3 fw-semibold"
               style={{ color: "#4a5568" }}
             >
               How it works
             </Nav.Link>
             <Nav.Link
-              href="#"
+              as={Link}
+              to="/business"
               className="mx-3 fw-semibold"
               style={{ color: "#4a5568" }}
             >
