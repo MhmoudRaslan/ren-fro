@@ -67,13 +67,7 @@ export default function Navbar() {
 
           {/* Right Side - Auth Buttons */}
           <Nav className="align-items-lg-center">
-            <Button
-              variant="link"
-              className="text-decoration-none mx-2"
-              style={{ color: "#4a5568" }}
-            >
-              🔍
-            </Button>
+          
 
             {isLoggedIn ? (
               <>

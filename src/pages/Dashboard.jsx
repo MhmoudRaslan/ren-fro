@@ -58,7 +58,7 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <Row className="mb-4">
         <Col>
-          <h1 className="fw-bold mb-2">Welcome back, {user.name}! 👋</h1>
+          <h1 className="fw-bold mb-2">Welcome back, {user.name}! </h1>
           <p className="text-muted">Manage your bookings and account settings</p>
         </Col>
       </Row>
@@ -69,7 +69,6 @@ export default function Dashboard() {
           <Col key={index} md={3} sm={6} className="mb-3">
             <Card className="border-0 shadow-sm h-100 card-hover">
               <Card.Body className="d-flex align-items-center">
-                <div className="fs-1 me-3">{stat.icon}</div>
                 <div>
                   <p className="text-muted mb-1 small">{stat.title}</p>
                   <h3 className="mb-0 fw-bold">{stat.value}</h3>

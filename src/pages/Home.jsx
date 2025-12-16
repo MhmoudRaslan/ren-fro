@@ -103,7 +103,6 @@ export default function Home() {
             <Col key={index} md={3} sm={6} className="mb-4">
               <Card className="text-center border-0 h-100 shadow-sm card-hover">
                 <Card.Body className="p-4">
-                  <div className="fs-1 mb-3">{feature.icon}</div>
                   <Card.Title className="fw-bold">{feature.title}</Card.Title>
                   <Card.Text className="text-muted">{feature.description}</Card.Text>
                 </Card.Body>

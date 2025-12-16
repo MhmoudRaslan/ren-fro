@@ -22,7 +22,11 @@ export default function HowItWorks() {
     },
     {
       number: '04',
-      icon: '🚗',
+      icon: <img
+            src={"/favicon.png"}
+            alt="Rentora Logo"
+            style={{ height: "40px", width: "auto" }}
+          />,
       title: 'Pick Up & Drive',
       description: 'Collect your vehicle from our convenient location. Our team will walk you through the vehicle features before you hit the road.'
     }
