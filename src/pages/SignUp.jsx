@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
+import { useAuth } from '../contexts/AuthContext'
 
 const signUpSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -20,6 +21,8 @@ const signUpSchema = z.object({
 
 export default function SignUp() {
   const navigate = useNavigate()
+  const { login } = useAuth()
+  
   const {
     register,
     handleSubmit,
@@ -31,10 +34,16 @@ export default function SignUp() {
   const onSubmit = async (data) => {
     try {
       console.log('Sign up data:', data)
+      
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Use auth context login with name
+      login(data.email, data.password, data.fullName)
+      
       toast.success('Account created successfully!')
-      navigate('/dashboard')
-    } catch  {
+      navigate('/') // Go to home after signup
+    } catch (error) {
       toast.error('Sign up failed. Please try again.')
     }
   }
@@ -47,7 +56,7 @@ export default function SignUp() {
             <Card.Body className="p-5">
               <div className="text-center mb-4">
                 <h2 className="fw-bold">Create Account</h2>
-                <p className="text-muted">Join Renato today</p>
+                <p className="text-muted">Join Rentora today</p>
               </div>
 
               <Form onSubmit={handleSubmit(onSubmit)}>

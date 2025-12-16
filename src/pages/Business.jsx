@@ -1,8 +1,11 @@
-import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { Container, Row, Col, Card, Button, Form, Modal } from 'react-bootstrap'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState, useRef } from 'react'
 
 export default function Business() {
+  const navigate = useNavigate()
+  const contactFormRef = useRef(null)
+  const [showModal, setShowModal] = useState(false)
   const [formData, setFormData] = useState({
     companyName: '',
     email: '',
@@ -52,10 +55,33 @@ export default function Business() {
     { name: 'Consulting', icon: '📈' }
   ]
 
+  const scrollToContact = () => {
+    contactFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleGetStarted = () => {
+    // Redirect to search page or open contact form
+    navigate('/search')
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     console.log('Business inquiry:', formData)
-    alert('Thank you! Our team will contact you within 24 hours.')
+    
+    // Show success modal
+    setShowModal(true)
+    
+    // Reset form
+    setFormData({
+      companyName: '',
+      email: '',
+      phone: '',
+      fleetSize: ''
+    })
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
   }
 
   return (
@@ -80,6 +106,7 @@ export default function Business() {
               <div className="d-flex gap-3">
                 <Button 
                   size="lg"
+                  onClick={handleGetStarted}
                   style={{ 
                     background: '#14b8a6', 
                     border: 'none',
@@ -92,6 +119,7 @@ export default function Business() {
                 <Button 
                   size="lg"
                   variant="outline-light"
+                  onClick={scrollToContact}
                   style={{ 
                     borderRadius: '10px',
                     padding: '12px 32px'
@@ -116,7 +144,7 @@ export default function Business() {
                     <div 
                       key={i}
                       style={{
-                        background: 'rgba(255,255,255,0.2)',
+                        background: 'rgba(238, 203, 203, 0.2)',
                         padding: '1rem',
                         borderRadius: '12px',
                         textAlign: 'center',
@@ -208,7 +236,7 @@ export default function Business() {
       </div>
 
       {/* Contact Form */}
-      <Container className="py-5 my-5">
+      <Container className="py-5 my-5" ref={contactFormRef}>
         <Row className="justify-content-center">
           <Col lg={8}>
             <Card className="border-0 shadow-lg" style={{ borderRadius: '20px' }}>
@@ -228,6 +256,7 @@ export default function Business() {
                           value={formData.companyName}
                           onChange={(e) => setFormData({...formData, companyName: e.target.value})}
                           style={{ borderRadius: '10px' }}
+                          placeholder="Acme Inc."
                         />
                       </Form.Group>
                     </Col>
@@ -240,6 +269,7 @@ export default function Business() {
                           value={formData.email}
                           onChange={(e) => setFormData({...formData, email: e.target.value})}
                           style={{ borderRadius: '10px' }}
+                          placeholder="you@company.com"
                         />
                       </Form.Group>
                     </Col>
@@ -254,6 +284,7 @@ export default function Business() {
                           value={formData.phone}
                           onChange={(e) => setFormData({...formData, phone: e.target.value})}
                           style={{ borderRadius: '10px' }}
+                          placeholder="+1 (555) 000-0000"
                         />
                       </Form.Group>
                     </Col>
@@ -294,6 +325,43 @@ export default function Business() {
           </Col>
         </Row>
       </Container>
+
+      {/* Success Modal */}
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Body className="text-center p-5">
+          <div 
+            style={{
+              width: '80px',
+              height: '80px',
+              background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem',
+              fontSize: '2.5rem'
+            }}
+          >
+            ✓
+          </div>
+          <h3 className="fw-bold mb-3">Request Submitted!</h3>
+          <p className="text-muted mb-4">
+            Thank you for your interest in Rentora for Business. 
+            Our team will contact you within 24 hours to discuss your needs.
+          </p>
+          <Button 
+            onClick={handleCloseModal}
+            style={{ 
+              background: '#14b8a6', 
+              border: 'none',
+              borderRadius: '10px',
+              padding: '10px 30px'
+            }}
+          >
+            Got it!
+          </Button>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

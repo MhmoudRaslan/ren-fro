@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
+import { useAuth } from '../contexts/AuthContext'
 
 const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -13,6 +14,8 @@ const signInSchema = z.object({
 
 export default function SignIn() {
   const navigate = useNavigate()
+  const { login } = useAuth()
+  
   const {
     register,
     handleSubmit,
@@ -24,10 +27,21 @@ export default function SignIn() {
   const onSubmit = async (data) => {
     try {
       console.log('Sign in data:', data)
+      
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Signed in successfully!')
-      navigate('/dashboard')
-    } catch  {
+      
+      // Use auth context login
+      const { isAdmin } = login(data.email, data.password)
+      
+      if (isAdmin) {
+        toast.success('Welcome back, Admin!')
+        navigate('/dashboard')
+      } else {
+        toast.success('Signed in successfully!')
+        navigate('/') // Regular users go to home
+      }
+    } catch (error) {
       toast.error('Sign in failed. Please try again.')
     }
   }
@@ -55,6 +69,9 @@ export default function SignIn() {
                   <Form.Control.Feedback type="invalid">
                     {errors.email?.message}
                   </Form.Control.Feedback>
+                  <Form.Text className="text-muted">
+                    Admin: admin@rentora.com | User: any other email
+                  </Form.Text>
                 </Form.Group>
 
                 <Form.Group className="mb-3">

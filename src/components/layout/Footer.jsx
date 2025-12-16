@@ -9,7 +9,6 @@ export default function Footer() {
       <Container>
         <Row>
           <Col md={4} className="mb-4 mb-md-0">
-            
             <h5 className="fw-bold mb-3"><img
               src={"/favicon.png"}
               alt="Rentora Logo"
