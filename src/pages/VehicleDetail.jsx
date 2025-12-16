@@ -111,7 +111,7 @@ export default function VehicleDetail() {
 
               <ListGroup variant="flush" className="mb-4">
                 <ListGroup.Item className="d-flex justify-content-between px-0">
-                  <span>🚗 Transmission</span>
+                  <span> Transmission</span>
                   <span className="fw-semibold">{vehicle.transmission}</span>
                 </ListGroup.Item>
                 <ListGroup.Item className="d-flex justify-content-between px-0">

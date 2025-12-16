@@ -16,7 +16,7 @@ export default function Search() {
     },
     {
       id: 3, name: 'Mercedes-Benz G-Class', year: 2023, category: 'SUV', price: 400,
-      image: 'https://images.unsplash.com/photo-1617531653520-bd4f03619e05?w=600',
+      image: 'https://images.cdn.autocar.co.uk/sites/autocar.co.uk/files/styles/gallery_slide/public/01-mercedes-g500-g-wagen-2024-review-lead-driving-front.jpg?itok=o7z6UwrT',
       rating: 4.8, seats: 5, transmission: 'Automatic', fuel: 'Petrol', available: true
     },
     {
