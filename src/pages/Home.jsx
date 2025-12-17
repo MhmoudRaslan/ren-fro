@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Home() {
+  const { isAuthenticated } = useAuth()
+
   const featuredVehicles = [
     {
       id: 1,
@@ -171,14 +174,22 @@ export default function Home() {
         </Row>
       </Container>
 
-      {/* CTA Section */}
+      {/* CTA Section - Only show Sign Up if not logged in */}
       <div className="bg-primary text-white py-5">
         <Container className="text-center">
           <h2 className="display-5 fw-bold mb-4">Ready to Hit the Road?</h2>
-          <p className="lead mb-4">Join thousands of satisfied customers</p>
-          <Button as={Link} to="/signup" size="lg" variant="light" className="px-5 py-3">
-            Sign Up Now
-          </Button>
+          <p className="lead mb-4">
+            {isAuthenticated ? 'Browse our collection and book your perfect ride' : 'Join thousands of satisfied customers'}
+          </p>
+          {isAuthenticated ? (
+            <Button as={Link} to="/search" size="lg" variant="light" className="px-5 py-3">
+              Browse Vehicles
+            </Button>
+          ) : (
+            <Button as={Link} to="/signup" size="lg" variant="light" className="px-5 py-3">
+              Sign Up Now
+            </Button>
+          )}
         </Container>
       </div>
     </div>

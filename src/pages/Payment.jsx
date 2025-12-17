@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, ListGroup } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
+import { useState, useEffect } from 'react'
 
 const paymentSchema = z.object({
   cardNumber: z.string().regex(/^\d{16}$/, 'Card number must be 16 digits'),
@@ -16,8 +17,10 @@ const paymentSchema = z.object({
 })
 
 export default function Payment() {
+  const { vehicleId } = useParams()
   const navigate = useNavigate()
-
+  const [days, setDays] = useState(5)
+  
   const {
     register,
     handleSubmit,
@@ -26,27 +29,33 @@ export default function Payment() {
     resolver: zodResolver(paymentSchema),
   })
 
-  // Mock vehicle data
-  const vehicleData = {
-    name: 'Tesla Model 3',
-    pricePerDay: 89,
-    days: 5,
-    insurance: 25,
-    tax: 15,
+  // Vehicle database with all vehicles
+  const vehicles = {
+    1: { name: 'Tesla Model Y Performance', pricePerDay: 129 },
+    2: { name: 'Porsche 911 Carrera', pricePerDay: 350 },
+    3: { name: 'Mercedes-Benz G-Class', pricePerDay: 400 },
+    4: { name: 'BMW M4 Competition', pricePerDay: 299 },
+    5: { name: 'Range Rover Autobiography', pricePerDay: 450 },
+    6: { name: 'Audi RS e-tron GT', pricePerDay: 399 },
   }
 
-  const subtotal = vehicleData.pricePerDay * vehicleData.days
-  const total = subtotal + vehicleData.insurance + vehicleData.tax
+  const vehicleData = vehicles[vehicleId] || { name: 'Unknown Vehicle', pricePerDay: 100 }
+
+  const insurance = 25
+  const tax = Math.round(vehicleData.pricePerDay * days * 0.08) // 8% tax
+  const subtotal = vehicleData.pricePerDay * days
+  const total = subtotal + insurance + tax
 
   const onSubmit = async (data) => {
     try {
       console.log('Payment data:', data)
-
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      toast.success('Payment successful!')
-      navigate('/dashboard')
-    } catch {
+      
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      toast.success(`Payment of $${total} successful!`)
+      navigate('/my-bookings')
+    } catch (error) {
       toast.error('Payment failed. Please try again.')
     }
   }
@@ -56,21 +65,21 @@ export default function Payment() {
       <Row className="justify-content-center">
         <Col lg={10}>
           <h2 className="fw-bold mb-4">Complete Your Payment</h2>
-
+          
           <Row>
             {/* Payment Form */}
             <Col md={7} className="mb-4">
               <Card className="shadow-sm border-0">
                 <Card.Body className="p-4">
                   <h5 className="fw-bold mb-4">Payment Information</h5>
-
+                  
                   <Form onSubmit={handleSubmit(onSubmit)}>
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>
                       <Form.Control
                         type="text"
+                        placeholder="1234 5678 9012 3456"
                         maxLength={16}
-                        placeholder="1234567812345678"
                         {...register('cardNumber')}
                         isInvalid={!!errors.cardNumber}
                       />
@@ -108,7 +117,6 @@ export default function Payment() {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
-
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>CVV</Form.Label>
@@ -149,6 +157,7 @@ export default function Payment() {
                           <Form.Label>City</Form.Label>
                           <Form.Control
                             type="text"
+                            placeholder="New York"
                             {...register('city')}
                             isInvalid={!!errors.city}
                           />
@@ -157,12 +166,12 @@ export default function Payment() {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
-
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Zip Code</Form.Label>
                           <Form.Control
                             type="text"
+                            placeholder="10001"
                             {...register('zipCode')}
                             isInvalid={!!errors.zipCode}
                           />
@@ -173,10 +182,10 @@ export default function Payment() {
                       </Col>
                     </Row>
 
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      size="lg"
+                    <Button 
+                      type="submit" 
+                      variant="primary" 
+                      size="lg" 
                       className="w-100 mt-3"
                       disabled={isSubmitting}
                     >
@@ -189,35 +198,57 @@ export default function Payment() {
 
             {/* Order Summary */}
             <Col md={5}>
-              <Card className="shadow-sm border-0 sticky-top" style={{ top: 100 }}>
+              <Card className="shadow-sm border-0 sticky-top" style={{ top: '100px' }}>
                 <Card.Body className="p-4">
                   <h5 className="fw-bold mb-4">Order Summary</h5>
+                  
+                  <div className="mb-3">
+                    <h6 className="fw-bold">{vehicleData.name}</h6>
+                    <p className="text-muted small mb-2">
+                      Rental Duration
+                    </p>
+                    <Form.Select 
+                      value={days}
+                      onChange={(e) => setDays(parseInt(e.target.value))}
+                      className="mb-2"
+                    >
+                      <option value="1">1 day</option>
+                      <option value="2">2 days</option>
+                      <option value="3">3 days</option>
+                      <option value="5">5 days</option>
+                      <option value="7">7 days</option>
+                      <option value="14">14 days</option>
+                      <option value="30">30 days</option>
+                    </Form.Select>
+                  </div>
 
-                  <h6 className="fw-bold">{vehicleData.name}</h6>
-                  <p className="text-muted small">
-                    {vehicleData.days} days rental
-                  </p>
-
-                  <ListGroup variant="flush">
+                  <ListGroup variant="flush" className="mb-3">
                     <ListGroup.Item className="d-flex justify-content-between px-0">
-                      <span>Rental</span>
-                      <span>${subtotal}</span>
+                      <span>Rental (${vehicleData.pricePerDay} × {days} days)</span>
+                      <span className="fw-semibold">${subtotal}</span>
                     </ListGroup.Item>
                     <ListGroup.Item className="d-flex justify-content-between px-0">
                       <span>Insurance</span>
-                      <span>${vehicleData.insurance}</span>
+                      <span className="fw-semibold">${insurance}</span>
                     </ListGroup.Item>
                     <ListGroup.Item className="d-flex justify-content-between px-0">
-                      <span>Tax</span>
-                      <span>${vehicleData.tax}</span>
+                      <span>Tax (8%)</span>
+                      <span className="fw-semibold">${tax}</span>
                     </ListGroup.Item>
                   </ListGroup>
 
                   <hr />
 
-                  <div className="d-flex justify-content-between fw-bold">
-                    <span>Total</span>
-                    <span className="text-primary">${total}</span>
+                  <div className="d-flex justify-content-between mb-3">
+                    <span className="fw-bold fs-5">Total</span>
+                    <span className="fw-bold fs-5 text-primary">${total}</span>
+                  </div>
+
+                  <div className="bg-light p-3 rounded">
+                    <p className="small mb-2 fw-semibold">🔒 Secure Payment</p>
+                    <p className="small text-muted mb-0">
+                      Your payment information is encrypted and secure
+                    </p>
                   </div>
                 </Card.Body>
               </Card>

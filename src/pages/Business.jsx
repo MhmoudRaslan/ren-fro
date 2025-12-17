@@ -187,21 +187,6 @@ export default function Business() {
             <Col key={index} md={6} lg={4}>
               <Card className="border-0 shadow-sm h-100 card-hover" style={{ borderRadius: '16px' }}>
                 <Card.Body className="p-4">
-                  <div 
-                    className="mb-3"
-                    style={{
-                      fontSize: '3rem',
-                      width: '80px',
-                      height: '80px',
-                      background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
-                      borderRadius: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {benefit.icon}
-                  </div>
                   <h4 className="fw-bold mb-3">{benefit.title}</h4>
                   <p className="text-muted mb-0">{benefit.description}</p>
                 </Card.Body>

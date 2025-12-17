@@ -101,21 +101,7 @@ export default function HowItWorks() {
                   >
                     {step.number}
                   </div>
-                  <div 
-                    className="fs-1 mb-3"
-                    style={{
-                      width: '80px',
-                      height: '80px',
-                      background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
-                      borderRadius: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '0 auto 1.5rem'
-                    }}
-                  >
-                    {step.icon}
-                  </div>
+                  
                   <h4 className="fw-bold mb-3">{step.title}</h4>
                   <p className="text-muted">{step.description}</p>
                 </Card.Body>
@@ -133,22 +119,7 @@ export default function HowItWorks() {
             {features.map((feature, index) => (
               <Col key={index} md={6} lg={4}>
                 <div className="d-flex align-items-start">
-                  <div 
-                    className="me-3"
-                    style={{
-                      fontSize: '2.5rem',
-                      width: '60px',
-                      height: '60px',
-                      background: '#f0fdfa',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}
-                  >
-                    {feature.icon}
-                  </div>
+                  
                   <div>
                     <h5 className="fw-bold mb-2">{feature.title}</h5>
                     <p className="text-muted mb-0">{feature.description}</p>

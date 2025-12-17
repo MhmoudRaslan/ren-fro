@@ -40,7 +40,7 @@ export default function Footer() {
 
           <Col md={4}>
             <h6 className="fw-bold mb-3">Contact</h6>
-            <p className="text-muted small">
+            <p className="text-white-50 text-decoration-none small">
               Email: info@renato.com
               <br />
               Phone: +1 (234) 567-890
