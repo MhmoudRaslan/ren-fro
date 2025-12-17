@@ -1,10 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Card, Form, Button, ListGroup } from 'react-bootstrap'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { Container, Row, Col, Card, Form, Button, ListGroup, Alert, Badge } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { useState, useEffect } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 
 const paymentSchema = z.object({
   cardNumber: z.string().regex(/^\d{16}$/, 'Card number must be 16 digits'),
@@ -19,7 +20,10 @@ const paymentSchema = z.object({
 export default function Payment() {
   const { vehicleId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const { user } = useAuth()
   const [days, setDays] = useState(5)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
   
   const {
     register,
@@ -29,17 +33,36 @@ export default function Payment() {
     resolver: zodResolver(paymentSchema),
   })
 
-  // Vehicle database with all vehicles
+  // Check authentication on mount
+  useEffect(() => {
+    if (!user) {
+      // Store the intended destination
+      navigate('/signin', { 
+        state: { from: location.pathname }
+      })
+    }
+  }, [user, navigate, location])
+
+  // Vehicle database with all 15 vehicles
   const vehicles = {
-    1: { name: 'Tesla Model Y Performance', pricePerDay: 129 },
-    2: { name: 'Porsche 911 Carrera', pricePerDay: 350 },
-    3: { name: 'Mercedes-Benz G-Class', pricePerDay: 400 },
-    4: { name: 'BMW M4 Competition', pricePerDay: 299 },
-    5: { name: 'Range Rover Autobiography', pricePerDay: 450 },
-    6: { name: 'Audi RS e-tron GT', pricePerDay: 399 },
+    1: { name: 'Tesla Model Y Performance', pricePerDay: 129, category: 'Electric SUV', image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400' },
+    2: { name: 'Porsche 911 Carrera', pricePerDay: 350, category: 'Sports Car', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400' },
+    3: { name: 'Mercedes-Benz G-Class', pricePerDay: 400, category: 'Luxury SUV', image: 'https://images.unsplash.com/photo-1617531653520-bd4f03619e05?w=400' },
+    4: { name: 'BMW M4 Competition', pricePerDay: 299, category: 'Sports Coupe', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400' },
+    5: { name: 'Range Rover Autobiography', pricePerDay: 450, category: 'Luxury SUV', image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400' },
+    6: { name: 'Audi RS e-tron GT', pricePerDay: 399, category: 'Electric Sedan', image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=400' },
+    7: { name: 'Toyota Camry Hybrid', pricePerDay: 85, category: 'Sedan', image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400' },
+    8: { name: 'Honda Accord Sport', pricePerDay: 75, category: 'Sedan', image: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?w=400' },
+    9: { name: 'Ford Mustang GT', pricePerDay: 199, category: 'Sports Car', image: 'https://images.unsplash.com/photo-1584345604476-8ec5f12e42dd?w=400' },
+    10: { name: 'Chevrolet Suburban', pricePerDay: 180, category: 'Full-Size SUV', image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400' },
+    11: { name: 'Nissan Leaf Plus', pricePerDay: 70, category: 'Electric Hatchback', image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400' },
+    12: { name: 'Volkswagen ID.4', pricePerDay: 95, category: 'Electric SUV', image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=400' },
+    13: { name: 'Lexus ES 350', pricePerDay: 125, category: 'Luxury Sedan', image: 'https://images.unsplash.com/photo-1623869675781-80aa31f92037?w=400' },
+    14: { name: 'Mazda CX-5 Turbo', pricePerDay: 90, category: 'Compact SUV', image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400' },
+    15: { name: 'Jeep Wrangler Rubicon', pricePerDay: 150, category: 'Off-Road SUV', image: 'https://images.unsplash.com/photo-1606016159991-35e6b36d0ea7?w=400' },
   }
 
-  const vehicleData = vehicles[vehicleId] || { name: 'Unknown Vehicle', pricePerDay: 100 }
+  const vehicleData = vehicles[vehicleId] || { name: 'Unknown Vehicle', pricePerDay: 100, category: 'Vehicle', image: '' }
 
   const insurance = 25
   const tax = Math.round(vehicleData.pricePerDay * days * 0.08) // 8% tax
@@ -53,11 +76,106 @@ export default function Payment() {
       // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000))
       
+      // Create booking object
+      const booking = {
+        id: Date.now(),
+        vehicleId: vehicleId,
+        vehicle: vehicleData.name,
+        vehicleCategory: vehicleData.category,
+        vehicleImage: vehicleData.image,
+        customer: user.name || user.email,
+        customerEmail: user.email,
+        customerPhone: user.phone || 'N/A',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        pickupLocation: data.city,
+        dropoffLocation: data.city,
+        status: 'active',
+        total: total,
+        pricePerDay: vehicleData.pricePerDay,
+        days: days,
+        paymentMethod: 'Credit Card',
+        cardLast4: data.cardNumber.slice(-4),
+        createdAt: new Date().toISOString(),
+      }
+
+      // Save to localStorage (simulating API call)
+      const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]')
+      existingBookings.push(booking)
+      localStorage.setItem('bookings', JSON.stringify(existingBookings))
+      
+      setPaymentSuccess(true)
       toast.success(`Payment of $${total} successful!`)
-      navigate('/my-bookings')
+      
+      // Redirect to dashboard after 2 seconds
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 2000)
     } catch (error) {
       toast.error('Payment failed. Please try again.')
     }
+  }
+
+  // Show loading if not authenticated
+  if (!user) {
+    return (
+      <Container className="py-5 text-center">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-3 text-muted">Redirecting to sign in...</p>
+      </Container>
+    )
+  }
+
+  // Show success message
+  if (paymentSuccess) {
+    return (
+      <Container className="py-5">
+        <Row className="justify-content-center">
+          <Col md={6} className="text-center">
+            <Card className="border-0 shadow-sm">
+              <Card.Body className="p-5">
+                <div className="mb-4">
+                  <div 
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto',
+                    }}
+                  >
+                    <span style={{ fontSize: '3rem' }}>✓</span>
+                  </div>
+                </div>
+                <h2 className="fw-bold mb-3">Payment Successful!</h2>
+                <p className="text-muted mb-4">
+                  Your booking has been confirmed. You will receive a confirmation email shortly.
+                </p>
+                <Alert variant="success" className="mb-4">
+                  <strong>Booking ID:</strong> #{Date.now()}<br />
+                  <strong>Amount Paid:</strong> ${total}
+                </Alert>
+                <p className="text-muted small mb-4">
+                  Redirecting to dashboard...
+                </p>
+                <Button 
+                  variant="primary" 
+                  size="lg"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Go to Dashboard Now
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    )
   }
 
   return (
@@ -65,6 +183,10 @@ export default function Payment() {
       <Row className="justify-content-center">
         <Col lg={10}>
           <h2 className="fw-bold mb-4">Complete Your Payment</h2>
+          
+          <Alert variant="info" className="mb-4">
+            <strong>Logged in as:</strong> {user.email}
+          </Alert>
           
           <Row>
             {/* Payment Form */}
@@ -202,9 +324,20 @@ export default function Payment() {
                 <Card.Body className="p-4">
                   <h5 className="fw-bold mb-4">Order Summary</h5>
                   
+                  {vehicleData.image && (
+                    <div className="mb-3">
+                      <img 
+                        src={vehicleData.image} 
+                        alt={vehicleData.name}
+                        style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                    </div>
+                  )}
+                  
                   <div className="mb-3">
                     <h6 className="fw-bold">{vehicleData.name}</h6>
-                    <p className="text-muted small mb-2">
+                    <Badge bg="secondary">{vehicleData.category}</Badge>
+                    <p className="text-muted small mb-2 mt-2">
                       Rental Duration
                     </p>
                     <Form.Select 

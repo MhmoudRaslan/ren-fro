@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap'
+import { Container, Row, Col, Card, Form, Button, Badge } from 'react-bootstrap'
 import { useState } from 'react'
 
 export default function Search() {
@@ -33,6 +33,51 @@ export default function Search() {
       id: 6, name: 'Audi RS e-tron GT', year: 2024, category: 'Sedan', price: 399,
       image: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600',
       rating: 4.9, seats: 5, transmission: 'Automatic', fuel: 'Electric', available: true
+    },
+    {
+      id: 7, name: 'Toyota Camry Hybrid', year: 2024, category: 'Sedan', price: 85,
+      image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600',
+      rating: 4.6, seats: 5, transmission: 'Automatic', fuel: 'Hybrid', available: true
+    },
+    {
+      id: 8, name: 'Honda Accord Sport', year: 2024, category: 'Sedan', price: 75,
+      image: 'https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600',
+      rating: 4.7, seats: 5, transmission: 'Automatic', fuel: 'Petrol', available: true
+    },
+    {
+      id: 9, name: 'Ford Mustang GT', year: 2024, category: 'Sports', price: 199,
+      image: 'https://images.unsplash.com/photo-1611859266238-4b98091d9d9b?w=800',
+      rating: 4.8, seats: 4, transmission: 'Manual', fuel: 'Petrol', available: true
+    },
+    {
+      id: 10, name: 'Chevrolet Suburban', year: 2023, category: 'SUV', price: 180,
+      image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=600',
+      rating: 4.5, seats: 8, transmission: 'Automatic', fuel: 'Petrol', available: true
+    },
+    {
+      id: 11, name: 'Nissan Leaf Plus', year: 2024, category: 'Electric', price: 70,
+      image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=600',
+      rating: 4.4, seats: 5, transmission: 'Automatic', fuel: 'Electric', available: true
+    },
+    {
+      id: 12, name: 'Volkswagen ID.4', year: 2024, category: 'Electric', price: 95,
+      image: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=600',
+      rating: 4.6, seats: 5, transmission: 'Automatic', fuel: 'Electric', available: true
+    },
+    {
+      id: 13, name: 'Lexus ES 350', year: 2024, category: 'Luxury', price: 125,
+      image:'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800',
+      rating: 4.8, seats: 5, transmission: 'Automatic', fuel: 'Petrol', available: true
+    },
+    {
+      id: 14, name: 'Mazda CX-5 Turbo', year: 2024, category: 'SUV', price: 90,
+      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600',
+      rating: 4.7, seats: 5, transmission: 'Automatic', fuel: 'Petrol', available: true
+    },
+    {
+      id: 15, name: 'Jeep Wrangler Rubicon', year: 2024, category: 'SUV', price: 150,
+      image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800',
+      rating: 4.6, seats: 5, transmission: 'Automatic', fuel: 'Petrol', available: true
     },
   ]
 
@@ -242,9 +287,23 @@ export default function Search() {
                           src={vehicle.image} 
                           className="vehicle-image"
                           alt={vehicle.name}
+                          style={{ height: '200px', objectFit: 'cover' }}
                         />
-                        <span className="vehicle-badge">{vehicle.category}</span>
-                        <span className="vehicle-rating">⭐ {vehicle.rating}</span>
+                        <Badge 
+                          bg="secondary" 
+                          className="position-absolute"
+                          style={{ top: '10px', left: '10px' }}
+                        >
+                          {vehicle.category}
+                        </Badge>
+                        <Badge 
+                          bg="warning" 
+                          text="dark"
+                          className="position-absolute"
+                          style={{ top: '10px', right: '10px' }}
+                        >
+                          ⭐ {vehicle.rating}
+                        </Badge>
                       </div>
                       <Card.Body>
                         <h5 className="fw-bold mb-1" style={{ fontSize: '1.125rem' }}>

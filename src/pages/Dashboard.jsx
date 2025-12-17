@@ -1,78 +1,60 @@
 import { Container, Row, Col, Card, Table, Badge, Button, Modal } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false)
   const [selectedBooking, setSelectedBooking] = useState(null)
+  const [bookings, setBookings] = useState([])
 
-  // Mock bookings with customer data
-  const allBookings = [
-    {
-      id: 1,
-      vehicleId: 1,
-      vehicle: 'Tesla Model Y Performance',
-      customer: 'John Smith',
-      customerEmail: 'john@example.com',
-      customerPhone: '+1 (555) 123-4567',
-      startDate: '2024-12-20',
-      endDate: '2024-12-25',
-      pickupLocation: 'San Francisco Airport',
-      dropoffLocation: 'San Francisco Airport',
-      status: 'active',
-      total: 645,
-      pricePerDay: 129,
-      days: 5
-    },
-    {
-      id: 2,
-      vehicleId: 2,
-      vehicle: 'Porsche 911 Carrera',
-      customer: 'Sarah Johnson',
-      customerEmail: 'sarah@example.com',
-      customerPhone: '+1 (555) 234-5678',
-      startDate: '2024-12-18',
-      endDate: '2024-12-21',
-      pickupLocation: 'Downtown SF',
-      dropoffLocation: 'Downtown SF',
-      status: 'active',
-      total: 1050,
-      pricePerDay: 350,
-      days: 3
-    },
-    {
-      id: 3,
-      vehicleId: 4,
-      vehicle: 'BMW M4 Competition',
-      customer: 'Mike Davis',
-      customerEmail: 'mike@example.com',
-      customerPhone: '+1 (555) 345-6789',
-      startDate: '2025-01-10',
-      endDate: '2025-01-15',
-      pickupLocation: 'Oakland Airport',
-      dropoffLocation: 'Oakland Airport',
-      status: 'upcoming',
-      total: 1495,
-      pricePerDay: 299,
-      days: 5
+  // Check authentication
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin')
     }
-  ]
+  }, [user, navigate])
+
+  // Load bookings from localStorage
+  useEffect(() => {
+    const loadBookings = () => {
+      try {
+        const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]')
+        
+        // Filter bookings for current user
+        const userBookings = allBookings.filter(b => b.customerEmail === user?.email)
+        
+        // Sort by creation date (newest first)
+        userBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        
+        setBookings(userBookings)
+      } catch (error) {
+        console.error('Error loading bookings:', error)
+      }
+    }
+
+    if (user) {
+      loadBookings()
+    }
+  }, [user])
 
   // Calculate stats
-  const totalVehicles = 6
-  const availableVehicles = 3
-  const rentedVehicles = 2
-  const maintenanceVehicles = 1
-  const activeBookings = allBookings.filter(b => b.status === 'active').length
-  const totalRevenue = allBookings.reduce((sum, b) => sum + b.total, 0)
+  const totalVehicles = 15
+  const activeBookings = bookings.filter(b => b.status === 'active').length
+  const upcomingBookings = bookings.filter(b => {
+    const startDate = new Date(b.startDate)
+    const now = new Date()
+    return startDate > now && b.status !== 'cancelled'
+  }).length
+  const totalRevenue = bookings.filter(b => b.status !== 'cancelled').reduce((sum, b) => sum + b.total, 0)
 
   const stats = [
-    { title: 'Total Vehicles', value: totalVehicles, icon: '🚗', color: 'primary', trend: '+2 this month' },
-    { title: 'Available', value: availableVehicles, icon: '✅', color: 'success', trend: `${availableVehicles} ready` },
-    { title: 'Rented Out', value: rentedVehicles, icon: '🔑', color: 'warning', trend: `${activeBookings} active bookings` },
-    { title: 'Maintenance', value: maintenanceVehicles, icon: '🔧', color: 'danger', trend: '1 in service' },
+    { title: 'Total Bookings', value: bookings.length, icon: '🚗', color: 'primary', trend: 'All time' },
+    { title: 'Active Rentals', value: activeBookings, icon: '✅', color: 'success', trend: `${activeBookings} ongoing` },
+    { title: 'Upcoming', value: upcomingBookings, icon: '📅', color: 'info', trend: `${upcomingBookings} scheduled` },
+    { title: 'Total Spent', value: `$${totalRevenue}`, icon: '💰', color: 'warning', trend: 'All bookings' },
   ]
 
   const getStatusBadge = (status) => {
@@ -85,9 +67,43 @@ export default function Dashboard() {
     return variants[status] || 'secondary'
   }
 
+  const getBookingStatus = (booking) => {
+    if (booking.status === 'cancelled') return 'cancelled'
+    
+    const now = new Date()
+    const startDate = new Date(booking.startDate)
+    const endDate = new Date(booking.endDate)
+    
+    if (startDate <= now && now <= endDate) {
+      return 'active'
+    } else if (startDate > now) {
+      return 'upcoming'
+    } else {
+      return 'completed'
+    }
+  }
+
   const handleViewDetails = (booking) => {
     setSelectedBooking(booking)
     setShowModal(true)
+  }
+
+  const handleCancelBooking = (bookingId) => {
+    if (window.confirm('Are you sure you want to cancel this booking?')) {
+      const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]')
+      const updatedBookings = allBookings.map(b => 
+        b.id === bookingId ? { ...b, status: 'cancelled' } : b
+      )
+      localStorage.setItem('bookings', JSON.stringify(updatedBookings))
+      
+      // Refresh bookings
+      const userBookings = updatedBookings.filter(b => b.customerEmail === user.email)
+      setBookings(userBookings)
+    }
+  }
+
+  if (!user) {
+    return null
   }
 
   return (
@@ -95,8 +111,8 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <Row className="mb-4">
         <Col>
-          <h1 className="fw-bold mb-2">Welcome back, {user?.name || 'Admin'}! 👋</h1>
-          <p className="text-muted">Here's what's happening with your fleet today</p>
+          <h1 className="fw-bold mb-2">Welcome back, {user?.name || user?.email}! 👋</h1>
+          <p className="text-muted">Here's an overview of your rentals</p>
         </Col>
       </Row>
 
@@ -134,86 +150,102 @@ export default function Dashboard() {
         ))}
       </Row>
 
-      {/* Revenue Card */}
-      <Row className="mb-4">
-        <Col md={12}>
-          <Card className="border-0 shadow-sm" style={{ background: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)' }}>
-            <Card.Body className="p-4 text-white">
-              <Row className="align-items-center">
-                <Col md={8}>
-                  <h5 className="fw-bold mb-2">Total Revenue (This Month)</h5>
-                  <h2 className="display-4 fw-bold mb-0">${totalRevenue.toLocaleString()}</h2>
-                </Col>
-                <Col md={4} className="text-end">
-                  <div className="fs-1 mb-2">💰</div>
-                  <p className="mb-0 opacity-75">+15% from last month</p>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
       {/* Bookings Table */}
       <Card className="border-0 shadow-sm">
         <Card.Body className="p-4">
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h4 className="fw-bold mb-0">Recent Bookings</h4>
-            <Button variant="outline-primary" size="sm">View All Bookings</Button>
+            <h4 className="fw-bold mb-0">My Bookings</h4>
+            <Button as={Link} to="/search" variant="outline-primary" size="sm">
+              + New Booking
+            </Button>
           </div>
 
-          <div className="table-responsive">
-            <Table hover>
-              <thead>
-                <tr>
-                  <th>Booking ID</th>
-                  <th>Customer</th>
-                  <th>Vehicle</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Status</th>
-                  <th>Total</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allBookings.map((booking) => (
-                  <tr key={booking.id}>
-                    <td className="fw-bold">#{booking.id}</td>
-                    <td>
-                      <div>{booking.customer}</div>
-                      <small className="text-muted">{booking.customerEmail}</small>
-                    </td>
-                    <td>{booking.vehicle}</td>
-                    <td>{booking.startDate}</td>
-                    <td>{booking.endDate}</td>
-                    <td>
-                      <Badge bg={getStatusBadge(booking.status)} className="text-capitalize">
-                        {booking.status}
-                      </Badge>
-                    </td>
-                    <td className="fw-bold">${booking.total}</td>
-                    <td>
-                      <Button 
-                        variant="outline-primary" 
-                        size="sm"
-                        onClick={() => handleViewDetails(booking)}
-                      >
-                        View Details
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-
-          {allBookings.length === 0 && (
+          {bookings.length === 0 ? (
             <div className="text-center py-5">
-              <p className="text-muted mb-3">No bookings yet</p>
+              <div className="mb-3" style={{ fontSize: '4rem' }}>🚗</div>
+              <h5 className="fw-bold mb-2">No bookings yet</h5>
+              <p className="text-muted mb-4">Start exploring our vehicles and make your first booking!</p>
               <Button as={Link} to="/search" variant="primary">
-                Add New Booking
+                Browse Vehicles
               </Button>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>Vehicle</th>
+                    <th>Dates</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookings.map((booking) => {
+                    const status = getBookingStatus(booking)
+                    return (
+                      <tr key={booking.id}>
+                        <td className="fw-bold">#{booking.id.toString().slice(-6)}</td>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            {booking.vehicleImage && (
+                              <img 
+                                src={booking.vehicleImage} 
+                                alt={booking.vehicle}
+                                style={{ 
+                                  width: '50px', 
+                                  height: '50px', 
+                                  objectFit: 'cover', 
+                                  borderRadius: '8px',
+                                  marginRight: '10px'
+                                }}
+                              />
+                            )}
+                            <div>
+                              <div className="fw-semibold">{booking.vehicle}</div>
+                              <small className="text-muted">{booking.vehicleCategory}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div>{booking.startDate}</div>
+                          <div className="text-muted small">to {booking.endDate}</div>
+                        </td>
+                        <td>{booking.days} days</td>
+                        <td>
+                          <Badge bg={getStatusBadge(status)} className="text-capitalize">
+                            {status}
+                          </Badge>
+                        </td>
+                        <td className="fw-bold">${booking.total}</td>
+                        <td>
+                          <div className="d-flex gap-2">
+                            <Button 
+                              variant="outline-primary" 
+                              size="sm"
+                              onClick={() => handleViewDetails(booking)}
+                            >
+                              Details
+                            </Button>
+                            {status === 'upcoming' && (
+                              <Button 
+                                variant="outline-danger" 
+                                size="sm"
+                                onClick={() => handleCancelBooking(booking.id)}
+                              >
+                                Cancel
+                              </Button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </Table>
             </div>
           )}
         </Card.Body>
@@ -222,30 +254,39 @@ export default function Dashboard() {
       {/* Booking Details Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Booking Details - #{selectedBooking?.id}</Modal.Title>
+          <Modal.Title>Booking Details - #{selectedBooking?.id.toString().slice(-6)}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedBooking && (
             <Row>
               <Col md={6}>
-                <h5 className="fw-bold mb-3">Customer Information</h5>
+                <h5 className="fw-bold mb-3">Vehicle Information</h5>
+                {selectedBooking.vehicleImage && (
+                  <img 
+                    src={selectedBooking.vehicleImage} 
+                    alt={selectedBooking.vehicle}
+                    style={{ 
+                      width: '100%', 
+                      height: '200px', 
+                      objectFit: 'cover', 
+                      borderRadius: '8px',
+                      marginBottom: '15px'
+                    }}
+                  />
+                )}
                 <div className="mb-3">
-                  <label className="text-muted small">Full Name</label>
-                  <div className="fw-semibold">{selectedBooking.customer}</div>
+                  <label className="text-muted small">Vehicle</label>
+                  <div className="fw-semibold">{selectedBooking.vehicle}</div>
                 </div>
                 <div className="mb-3">
-                  <label className="text-muted small">Email</label>
-                  <div className="fw-semibold">{selectedBooking.customerEmail}</div>
-                </div>
-                <div className="mb-3">
-                  <label className="text-muted small">Phone</label>
-                  <div className="fw-semibold">{selectedBooking.customerPhone}</div>
+                  <label className="text-muted small">Category</label>
+                  <div className="fw-semibold">{selectedBooking.vehicleCategory}</div>
                 </div>
                 <div className="mb-3">
                   <label className="text-muted small">Status</label>
                   <div>
-                    <Badge bg={getStatusBadge(selectedBooking.status)} className="text-capitalize">
-                      {selectedBooking.status}
+                    <Badge bg={getStatusBadge(getBookingStatus(selectedBooking))} className="text-capitalize">
+                      {getBookingStatus(selectedBooking)}
                     </Badge>
                   </div>
                 </div>
@@ -254,8 +295,9 @@ export default function Dashboard() {
               <Col md={6}>
                 <h5 className="fw-bold mb-3">Trip Information</h5>
                 <div className="mb-3">
-                  <label className="text-muted small">Vehicle</label>
-                  <div className="fw-semibold">{selectedBooking.vehicle}</div>
+                  <label className="text-muted small">Customer</label>
+                  <div className="fw-semibold">{selectedBooking.customer}</div>
+                  <div className="small text-muted">{selectedBooking.customerEmail}</div>
                 </div>
                 <div className="mb-3">
                   <label className="text-muted small">Pickup Location</label>
@@ -286,11 +328,18 @@ export default function Dashboard() {
                     <span>Number of Days</span>
                     <span>{selectedBooking.days} days</span>
                   </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Payment Method</span>
+                    <span>{selectedBooking.paymentMethod} •••• {selectedBooking.cardLast4}</span>
+                  </div>
                   <hr />
                   <div className="d-flex justify-content-between">
                     <span className="fw-bold fs-5">Total Amount</span>
                     <span className="fw-bold fs-5 text-primary">${selectedBooking.total}</span>
                   </div>
+                </div>
+                <div className="mt-3 small text-muted">
+                  <strong>Booked on:</strong> {new Date(selectedBooking.createdAt).toLocaleString()}
                 </div>
               </Col>
             </Row>
